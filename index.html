@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Cierre — Módulo 4</title>
+<style>
+  :root{
+    --purple:#4000BC;
+    --purple-light:#e9e2ff;
+    --green:#05B605;
+    --green-light:#dff7df;
+    --bg:#FFFAFA;
+    --ink:#1c1c1c;
+    --muted:#6b6b6b;
+    --card-bad:#fff2f2;
+    --red:#c62828;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Poppins","Segoe UI",Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    padding:0 0 3rem;
+  }
+  header{
+    background:linear-gradient(100deg,#1fae1f 0%, #1f5a9e 55%, #2c1a9e 100%);
+    color:#fff;
+    padding:1.4rem 2rem;
+    display:flex;
+    align-items:center;
+    gap:1.4rem;
+    flex-wrap:wrap;
+  }
+  header img{
+    height:52px;
+    width:auto;
+  }
+  header .title-block{flex:1;min-width:260px;}
+  header h1{
+    margin:0;
+    font-size:1.4rem;
+    font-weight:600;
+  }
+  header p.subject{
+    margin:.25rem 0 0;
+    font-size:.95rem;
+    font-weight:500;
+    opacity:.96;
+  }
+  header p.meta{
+    margin:.2rem 0 0;
+    font-size:.85rem;
+    opacity:.88;
+  }
+  header p{
+    max-width:60ch;
+  }
+  main{
+    max-width:1080px;
+    margin:0 auto;
+    padding:1.6rem;
+  }
+  .pool{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.7rem;
+    padding:1rem;
+    background:#fff;
+    border:1px solid #eee0ff;
+    border-radius:14px;
+    min-height:70px;
+    margin-bottom:1.6rem;
+  }
+  .pool.empty::after{
+    content:"Arrastraste todos los pendientes. Revisa tu resultado abajo.";
+    color:var(--muted);
+    font-size:.9rem;
+    padding:.4rem;
+  }
+  .pool.empty{display:flex;align-items:center;justify-content:center;}
+  .card{
+    background:var(--purple-light);
+    border:1px solid #d5c6ff;
+    border-radius:10px;
+    padding:.65rem .85rem;
+    font-size:.9rem;
+    line-height:1.35;
+    cursor:grab;
+    max-width:280px;
+    user-select:none;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .card:active{cursor:grabbing;}
+  .card.selected{
+    outline:2px solid var(--purple);
+    box-shadow:0 2px 10px rgba(64,0,188,.25);
+  }
+  .card.correct{background:var(--green-light);border-color:#8fdc8f;}
+  .card.incorrect{background:var(--card-bad);border-color:#e6a3a3;}
+  .card .verdict{
+    display:block;
+    margin-top:.4rem;
+    font-size:.78rem;
+    font-weight:600;
+  }
+  .card.correct .verdict{color:#1c7a1c;}
+  .card.incorrect .verdict{color:var(--red);}
+
+  .board{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:.9rem;
+  }
+  @media (max-width:820px){
+    .board{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:520px){
+    .board{grid-template-columns:1fr;}
+  }
+  .column{
+    background:#fff;
+    border:2px dashed #d8d0ee;
+    border-radius:14px;
+    padding:.9rem;
+    min-height:220px;
+    display:flex;
+    flex-direction:column;
+    gap:.55rem;
+  }
+  .column.dragover{
+    border-color:var(--purple);
+    background:#faf8ff;
+  }
+  .column h2{
+    margin:0 0 .3rem;
+    font-size:.95rem;
+    font-weight:600;
+    color:var(--purple);
+  }
+  .column .drop-zone{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:.5rem;
+  }
+
+  .score-bar{
+    margin-top:1.6rem;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:1rem;
+    background:#fff;
+    border-radius:14px;
+    border:1px solid #eee0ff;
+    padding:1rem 1.3rem;
+  }
+  .score-bar .score{
+    font-size:1.1rem;
+    font-weight:600;
+  }
+  .score-bar .score span{color:var(--purple);}
+  button#reset{
+    background:var(--purple);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:.6rem 1.1rem;
+    font-size:.9rem;
+    font-weight:600;
+    cursor:pointer;
+  }
+  button#reset:hover{opacity:.9;}
+
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:.8rem;
+    margin-top:2rem;
+  }
+
+  .bars{display:flex;height:10px;margin-top:1.4rem;}
+  .bars .b1{background:var(--purple);flex:2;border-radius:6px 0 0 6px;}
+  .bars .b2{background:var(--green);flex:1;border-radius:0 6px 6px 0;}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="https://i.postimg.cc/FKz4sz2C/logoutelsinfondo.png" alt="UTEL">
+  <div class="title-block">
+    <h1>Simulador de Cierre</h1>
+    <p class="subject">Módulo 4. La Dirección de Proyectos Fases 4 y 5 — Semana 4</p>
+    <p class="meta">Profesor: Dr. Armando Sandoval Maravilla</p>
+  </div>
+</header>
+
+<main>
+  <p style="color:var(--muted);font-size:.92rem;margin:0 0 1rem;max-width:70ch;">Arrastra cada pendiente a la columna donde debería resolverse antes de dar el proyecto por cerrado.</p>
+  <div class="pool" id="pool"></div>
+
+  <div class="board" id="board">
+    <div class="column" data-cat="administrativo">
+      <h2>Cierre administrativo</h2>
+      <div class="drop-zone" data-cat="administrativo"></div>
+    </div>
+    <div class="column" data-cat="contractual">
+      <h2>Cierre contractual</h2>
+      <div class="drop-zone" data-cat="contractual"></div>
+    </div>
+    <div class="column" data-cat="informe">
+      <h2>Informe final</h2>
+      <div class="drop-zone" data-cat="informe"></div>
+    </div>
+    <div class="column" data-cat="activos">
+      <h2>Activos de la organización</h2>
+      <div class="drop-zone" data-cat="activos"></div>
+    </div>
+  </div>
+
+  <div class="score-bar">
+    <div class="score">Clasificados correctamente: <span id="scoreVal">0</span> / <span id="totalVal">0</span></div>
+    <button id="reset">Reiniciar</button>
+  </div>
+
+  <div class="bars"><div class="b1"></div><div class="b2"></div></div>
+</main>
+
+<footer>UTEL — Educación Continua</footer>
+
+<script>
+const items = [
+  { id: 1, text: "El cliente no ha firmado la aceptación de los entregables.", cat: "administrativo" },
+  { id: 2, text: "Las cuentas del proyecto siguen abiertas en el sistema contable.", cat: "administrativo" },
+  { id: 3, text: "El personal del proyecto sigue asignado y nadie lo ha liberado.", cat: "administrativo" },
+  { id: 4, text: "El proveedor no ha confirmado por escrito que su trabajo fue aceptado.", cat: "contractual" },
+  { id: 5, text: "Hay una reclamación de pago pendiente con un contratista.", cat: "contractual" },
+  { id: 6, text: "Los planos \u2018de obra terminada\u2019 nunca se archivaron.", cat: "contractual" },
+  { id: 7, text: "Nadie documentó si se cumplió el presupuesto ni por qué varió.", cat: "informe" },
+  { id: 8, text: "No existe un resumen de qué riesgos aparecieron y cómo se resolvieron.", cat: "informe" },
+  { id: 9, text: "Las lecciones aprendidas están solo en un chat de WhatsApp del equipo.", cat: "activos" },
+  { id: 10, text: "Los documentos operativos para mantener el sistema nunca llegaron a quien lo va a operar.", cat: "activos" },
+];
+
+const feedback = {
+  administrativo: "Es cierre administrativo: entregables, cuentas y recursos del proyecto.",
+  contractual: "Es cierre contractual: acuerdos, reclamaciones y documentación con proveedores.",
+  informe: "Va en el informe final: evidencia de alcance, costo, cronograma o riesgos.",
+  activos: "Es actualización de activos de la organización: queda como conocimiento para futuros proyectos.",
+};
+
+const pool = document.getElementById("pool");
+const dropZones = document.querySelectorAll(".drop-zone");
+const scoreVal = document.getElementById("scoreVal");
+const totalVal = document.getElementById("totalVal");
+totalVal.textContent = items.length;
+
+let selectedCard = null;
+
+function shuffledItems() {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function makeCard(item) {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.draggable = true;
+  card.dataset.id = item.id;
+  card.dataset.cat = item.cat;
+  card.textContent = item.text;
+
+  card.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("text/plain", item.id);
+    setTimeout(() => card.style.opacity = "0.4", 0);
+  });
+  card.addEventListener("dragend", () => card.style.opacity = "1");
+
+  // tap-to-select fallback for touch devices
+  card.addEventListener("click", () => {
+    if (card.classList.contains("correct") || card.classList.contains("incorrect")) return;
+    if (selectedCard === card) {
+      card.classList.remove("selected");
+      selectedCard = null;
+      return;
+    }
+    document.querySelectorAll(".card.selected").forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+    selectedCard = card;
+  });
+
+  return card;
+}
+
+function renderPool() {
+  pool.innerHTML = "";
+  shuffledItems().forEach(item => pool.appendChild(makeCard(item)));
+  pool.classList.remove("empty");
+}
+
+function updateScore() {
+  const correct = document.querySelectorAll(".card.correct").length;
+  scoreVal.textContent = correct;
+  if (pool.children.length === 0) pool.classList.add("empty");
+}
+
+function placeCard(card, zone) {
+  const cat = zone.dataset.cat;
+  const isCorrect = card.dataset.cat === cat;
+  card.classList.add(isCorrect ? "correct" : "incorrect");
+  card.draggable = false;
+
+  const verdict = document.createElement("span");
+  verdict.className = "verdict";
+  verdict.textContent = isCorrect ? "Correcto. " + feedback[card.dataset.cat] : "No va aquí. " + feedback[card.dataset.cat];
+  card.appendChild(verdict);
+
+  zone.appendChild(card);
+  updateScore();
+}
+
+dropZones.forEach(zone => {
+  zone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    zone.closest(".column").classList.add("dragover");
+  });
+  zone.addEventListener("dragleave", () => {
+    zone.closest(".column").classList.remove("dragover");
+  });
+  zone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    zone.closest(".column").classList.remove("dragover");
+    const id = e.dataTransfer.getData("text/plain");
+    const card = document.querySelector(`.card[data-id="${id}"]`);
+    if (card && card.parentElement === pool) placeCard(card, zone);
+  });
+  // tap-to-place fallback
+  zone.addEventListener("click", () => {
+    if (selectedCard && selectedCard.parentElement === pool) {
+      selectedCard.classList.remove("selected");
+      placeCard(selectedCard, zone);
+      selectedCard = null;
+    }
+  });
+});
+
+document.getElementById("reset").addEventListener("click", renderPool);
+
+renderPool();
+</script>
+</body>
+</html>
