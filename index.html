@@ -13,8 +13,8 @@
     --bg:#FFFAFA;
     --ink:#1c1c1c;
     --muted:#6b6b6b;
-    --card-bad:#fff2f2;
     --red:#c62828;
+    --red-light:#fff2f2;
   }
   *{box-sizing:border-box;}
   body{
@@ -33,155 +33,92 @@
     gap:1.2rem;
     flex-wrap:wrap;
   }
-  header img{
-    height:52px;
-    width:auto;
-  }
-  header .title-block{flex:1;min-width:260px;}
-  header h1{
-    margin:0;
-    font-size:1.4rem;
-    font-weight:600;
-  }
-  header p.subject{
-    margin:.25rem 0 0;
-    font-size:.95rem;
-    font-weight:500;
-    opacity:.96;
-  }
-  header p.meta{
-    margin:.2rem 0 0;
-    font-size:.85rem;
-    opacity:.88;
-  }
-  header p{
-    max-width:60ch;
-  }
+  header img{height:48px;width:auto;}
+  header .title-block{flex:1;min-width:240px;}
+  header h1{margin:0;font-size:1.3rem;font-weight:600;}
+  header p.subject{margin:.25rem 0 0;font-size:.92rem;font-weight:500;opacity:.96;}
+  header p.meta{margin:.2rem 0 0;font-size:.82rem;opacity:.88;}
+
   main{
-    max-width:1080px;
+    max-width:640px;
     margin:0 auto;
-    padding:1.6rem;
+    padding:1.6rem 1.2rem;
     width:100%;
   }
-  .pool{
-    display:flex;
-    flex-wrap:wrap;
-    gap:.6rem;
-    padding:.9rem;
+  .intro{color:var(--muted);font-size:.92rem;margin:0 0 1.2rem;}
+
+  .progress{
+    font-size:.85rem;
+    color:var(--muted);
+    margin-bottom:.6rem;
+  }
+
+  .stage{
     background:#fff;
     border:1px solid #eee0ff;
-    border-radius:8px;
-    min-height:60px;
-    margin-bottom:1.4rem;
+    border-radius:10px;
+    padding:1.3rem;
   }
-  .pool.empty::after{
-    content:"Arrastraste todos los pendientes. Revisa tu resultado abajo.";
-    color:var(--muted);
-    font-size:.9rem;
-    padding:.4rem;
+  .prompt{
+    font-size:1.05rem;
+    line-height:1.5;
+    margin:0 0 1.1rem;
   }
-  .pool.empty{display:flex;align-items:center;justify-content:center;}
-  .card{
+  .options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:.6rem;
+  }
+  @media (max-width:420px){
+    .options{grid-template-columns:1fr;}
+  }
+  .opt{
     background:var(--purple-light);
     border:1px solid #d5c6ff;
     border-radius:8px;
-    padding:.6rem .8rem;
+    padding:.65rem .7rem;
+    font-size:.88rem;
+    text-align:left;
+    cursor:pointer;
+    color:var(--ink);
+    font-family:inherit;
+  }
+  .opt:disabled{cursor:default;}
+  .opt.correct{background:var(--green-light);border-color:#8fdc8f;}
+  .opt.incorrect{background:var(--red-light);border-color:#e6a3a3;}
+
+  .feedback{
+    margin-top:1rem;
+    padding:.8rem .9rem;
+    border-radius:8px;
     font-size:.9rem;
-    line-height:1.35;
-    cursor:pointer;
-    max-width:280px;
-    user-select:none;
+    line-height:1.4;
   }
-  .card:active{cursor:grabbing;}
-  .card.selected{
-    outline:2px solid var(--purple);
-  }
-  .card.correct{background:var(--green-light);border-color:#8fdc8f;}
-  .card.incorrect{background:var(--card-bad);border-color:#e6a3a3;}
-  .card .verdict{
-    display:block;
-    margin-top:.4rem;
-    font-size:.78rem;
-    font-weight:600;
-  }
-  .card.correct .verdict{color:#1c7a1c;}
-  .card.incorrect .verdict{color:var(--red);}
+  .feedback.ok{background:var(--green-light);color:#1c7a1c;}
+  .feedback.no{background:var(--red-light);color:var(--red);}
 
-  .board{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:.9rem;
-  }
-  @media (max-width:820px){
-    .board{grid-template-columns:repeat(2,1fr);}
-  }
-  @media (max-width:520px){
-    .board{grid-template-columns:1fr;}
-    header{padding:1.1rem 1.2rem;}
-    header img{height:40px;}
-    header h1{font-size:1.2rem;}
-    header p.subject{font-size:.85rem;}
-    header p.meta{font-size:.78rem;}
-    main{padding:1rem;}
-    .card{max-width:100%;font-size:.85rem;}
-    .score-bar{flex-direction:column;align-items:stretch;text-align:center;}
-    button#reset{width:100%;}
-  }
-  .column{
-    background:#fff;
-    border:1px solid #e2ddf0;
-    border-radius:8px;
-    padding:.8rem;
-    min-height:180px;
-    display:flex;
-    flex-direction:column;
-    gap:.5rem;
-  }
-  .column.dragover{
-    border-color:var(--purple);
-  }
-  .column h2{
-    margin:0 0 .3rem;
-    font-size:.95rem;
-    font-weight:600;
-    color:var(--purple);
-  }
-  .column .drop-zone{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    gap:.5rem;
-    cursor:pointer;
-  }
-
-  .score-bar{
-    margin-top:1.6rem;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:1rem;
-    background:#fff;
-    border-radius:8px;
-    border:1px solid #eee0ff;
-    padding:1rem 1.2rem;
-  }
-  .score-bar .score{
-    font-size:1.1rem;
-    font-weight:600;
-  }
-  .score-bar .score span{color:var(--purple);}
-  button#reset{
+  .next{
+    margin-top:1rem;
     background:var(--purple);
     color:#fff;
     border:none;
     border-radius:6px;
-    padding:.55rem 1.1rem;
+    padding:.6rem 1.1rem;
     font-size:.9rem;
     font-weight:600;
     cursor:pointer;
   }
-  button#reset:hover{opacity:.9;}
+
+  .result{
+    text-align:center;
+    padding:2rem 1rem;
+  }
+  .result .big{
+    font-size:2.2rem;
+    font-weight:700;
+    color:var(--purple);
+  }
+  .result p{color:var(--muted);font-size:.95rem;}
 
   footer{
     text-align:center;
@@ -203,32 +140,9 @@
 </header>
 
 <main>
-  <p style="color:var(--muted);font-size:.92rem;margin:0 0 1rem;max-width:70ch;">Toca un pendiente y luego toca la columna donde debería resolverse antes de dar el proyecto por cerrado.</p>
-  <div class="pool" id="pool"></div>
-
-  <div class="board" id="board">
-    <div class="column" data-cat="administrativo">
-      <h2>Cierre administrativo</h2>
-      <div class="drop-zone" data-cat="administrativo"></div>
-    </div>
-    <div class="column" data-cat="contractual">
-      <h2>Cierre contractual</h2>
-      <div class="drop-zone" data-cat="contractual"></div>
-    </div>
-    <div class="column" data-cat="informe">
-      <h2>Informe final</h2>
-      <div class="drop-zone" data-cat="informe"></div>
-    </div>
-    <div class="column" data-cat="activos">
-      <h2>Activos de la organización</h2>
-      <div class="drop-zone" data-cat="activos"></div>
-    </div>
-  </div>
-
-  <div class="score-bar">
-    <div class="score">Clasificados correctamente: <span id="scoreVal">0</span> / <span id="totalVal">0</span></div>
-    <button id="reset">Reiniciar</button>
-  </div>
+  <p class="intro">A cada pendiente le falta algo para poder cerrar el proyecto. Elige en cuál de las 4 categorías debe resolverse.</p>
+  <div class="progress" id="progress"></div>
+  <div id="stageWrap"></div>
 </main>
 
 <footer>UTEL — Educación Continua</footer>
@@ -237,14 +151,17 @@
 const items = [
   { id: 1, text: "El cliente no ha firmado la aceptación de los entregables.", cat: "administrativo" },
   { id: 2, text: "Las cuentas del proyecto siguen abiertas en el sistema contable.", cat: "administrativo" },
-  { id: 3, text: "El personal del proyecto sigue asignado y nadie lo ha liberado.", cat: "administrativo" },
-  { id: 4, text: "El proveedor no ha confirmado por escrito que su trabajo fue aceptado.", cat: "contractual" },
-  { id: 5, text: "Hay una reclamación de pago pendiente con un contratista.", cat: "contractual" },
-  { id: 6, text: "Los planos \u2018de obra terminada\u2019 nunca se archivaron.", cat: "contractual" },
-  { id: 7, text: "Nadie documentó si se cumplió el presupuesto ni por qué varió.", cat: "informe" },
-  { id: 8, text: "No existe un resumen de qué riesgos aparecieron y cómo se resolvieron.", cat: "informe" },
-  { id: 9, text: "Las lecciones aprendidas están solo en un chat de WhatsApp del equipo.", cat: "activos" },
-  { id: 10, text: "Los documentos operativos para mantener el sistema nunca llegaron a quien lo va a operar.", cat: "activos" },
+  { id: 3, text: "Hay una reclamación de pago pendiente con un contratista.", cat: "contractual" },
+  { id: 4, text: "Nadie documentó si se cumplió el presupuesto ni por qué varió.", cat: "informe" },
+  { id: 5, text: "No existe un resumen de qué riesgos aparecieron y cómo se resolvieron.", cat: "informe" },
+  { id: 6, text: "Las lecciones aprendidas están solo en un chat de WhatsApp del equipo.", cat: "activos" },
+];
+
+const options = [
+  { cat: "administrativo", label: "Cierre administrativo" },
+  { cat: "contractual", label: "Cierre contractual" },
+  { cat: "informe", label: "Informe final" },
+  { cat: "activos", label: "Activos de la organización" },
 ];
 
 const feedback = {
@@ -254,84 +171,85 @@ const feedback = {
   activos: "Es actualización de activos de la organización: queda como conocimiento para futuros proyectos.",
 };
 
-const pool = document.getElementById("pool");
-const dropZones = document.querySelectorAll(".drop-zone");
-const scoreVal = document.getElementById("scoreVal");
-const totalVal = document.getElementById("totalVal");
-totalVal.textContent = items.length;
+let order = [];
+let current = 0;
+let score = 0;
 
-let selectedCard = null;
-
-function shuffledItems() {
-  const arr = [...items];
-  for (let i = arr.length - 1; i > 0; i--) {
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    [a[i], a[j]] = [a[j], a[i]];
   }
-  return arr;
+  return a;
 }
 
-function makeCard(item) {
-  const card = document.createElement("div");
-  card.className = "card";
-  card.dataset.id = item.id;
-  card.dataset.cat = item.cat;
-  card.textContent = item.text;
+function start() {
+  order = shuffle(items);
+  current = 0;
+  score = 0;
+  renderStage();
+}
 
-  card.addEventListener("click", () => {
-    if (card.classList.contains("correct") || card.classList.contains("incorrect")) return;
-    if (selectedCard === card) {
-      card.classList.remove("selected");
-      selectedCard = null;
-      return;
-    }
-    document.querySelectorAll(".card.selected").forEach(c => c.classList.remove("selected"));
-    card.classList.add("selected");
-    selectedCard = card;
+function renderProgress() {
+  document.getElementById("progress").textContent =
+    current < order.length ? `Pendiente ${current + 1} de ${order.length}` : "";
+}
+
+function renderStage() {
+  renderProgress();
+  const wrap = document.getElementById("stageWrap");
+  if (current >= order.length) {
+    wrap.innerHTML = `
+      <div class="stage result">
+        <div class="big">${score} / ${order.length}</div>
+        <p>pendientes bien clasificados</p>
+        <button class="next" id="restartBtn">Repetir actividad</button>
+      </div>`;
+    document.getElementById("restartBtn").addEventListener("click", start);
+    return;
+  }
+
+  const item = order[current];
+  wrap.innerHTML = `
+    <div class="stage">
+      <p class="prompt">${item.text}</p>
+      <div class="options">
+        ${options.map(o => `<button class="opt" data-cat="${o.cat}">${o.label}</button>`).join("")}
+      </div>
+      <div id="fb"></div>
+    </div>`;
+
+  wrap.querySelectorAll(".opt").forEach(btn => {
+    btn.addEventListener("click", () => answer(item, btn));
+  });
+}
+
+function answer(item, btn) {
+  const chosen = btn.dataset.cat;
+  const isCorrect = chosen === item.cat;
+  if (isCorrect) score++;
+
+  document.querySelectorAll(".opt").forEach(b => {
+    b.disabled = true;
+    if (b.dataset.cat === item.cat) b.classList.add("correct");
+    else if (b === btn) b.classList.add("incorrect");
   });
 
-  return card;
-}
+  const fb = document.getElementById("fb");
+  fb.innerHTML = `
+    <div class="feedback ${isCorrect ? "ok" : "no"}">
+      ${isCorrect ? "Correcto. " : "No era esa. "} ${feedback[item.cat]}
+    </div>
+    <button class="next" id="nextBtn">${current + 1 < order.length ? "Siguiente" : "Ver resultado"}</button>`;
 
-function renderPool() {
-  pool.innerHTML = "";
-  shuffledItems().forEach(item => pool.appendChild(makeCard(item)));
-  pool.classList.remove("empty");
-}
-
-function updateScore() {
-  const correct = document.querySelectorAll(".card.correct").length;
-  scoreVal.textContent = correct;
-  if (pool.children.length === 0) pool.classList.add("empty");
-}
-
-function placeCard(card, zone) {
-  const cat = zone.dataset.cat;
-  const isCorrect = card.dataset.cat === cat;
-  card.classList.add(isCorrect ? "correct" : "incorrect");
-
-  const verdict = document.createElement("span");
-  verdict.className = "verdict";
-  verdict.textContent = isCorrect ? "Correcto. " + feedback[card.dataset.cat] : "No va aquí. " + feedback[card.dataset.cat];
-  card.appendChild(verdict);
-
-  zone.appendChild(card);
-  updateScore();
-}
-
-dropZones.forEach(zone => {
-  zone.addEventListener("click", () => {
-    if (selectedCard && selectedCard.parentElement === pool) {
-      selectedCard.classList.remove("selected");
-      placeCard(selectedCard, zone);
-      selectedCard = null;
-    }
+  document.getElementById("nextBtn").addEventListener("click", () => {
+    current++;
+    renderStage();
   });
-});
+}
 
-document.getElementById("reset").addEventListener("click", renderPool);
-
-renderPool();
+start();
 </script>
 </body>
 </html>
