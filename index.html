@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulador de Cierre — Módulo 4</title>
+<title>Checklist de Cierre — Módulo 4</title>
 <style>
   :root{
     --purple:#4000BC;
@@ -13,8 +13,6 @@
     --bg:#FFFAFA;
     --ink:#1c1c1c;
     --muted:#6b6b6b;
-    --red:#c62828;
-    --red-light:#fff2f2;
   }
   *{box-sizing:border-box;}
   body{
@@ -40,85 +38,69 @@
   header p.meta{margin:.2rem 0 0;font-size:.82rem;opacity:.88;}
 
   main{
-    max-width:640px;
+    max-width:680px;
     margin:0 auto;
     padding:1.6rem 1.2rem;
     width:100%;
   }
-  .intro{color:var(--muted);font-size:.92rem;margin:0 0 1.2rem;}
+  .intro{color:var(--muted);font-size:.92rem;margin:0 0 1.3rem;}
 
-  .progress{
-    font-size:.85rem;
-    color:var(--muted);
-    margin-bottom:.6rem;
+  .group{
+    margin-bottom:1.3rem;
   }
+  .group h2{
+    font-size:.95rem;
+    color:var(--purple);
+    margin:0 0 .5rem;
+  }
+  .item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:.8rem;
+    background:#fff;
+    border:1px solid #eee0ff;
+    border-radius:8px;
+    padding:.7rem .9rem;
+    margin-bottom:.5rem;
+  }
+  .item p{
+    margin:0;
+    font-size:.92rem;
+    line-height:1.4;
+  }
+  .toggle{
+    display:flex;
+    gap:.4rem;
+    flex-shrink:0;
+  }
+  .toggle button{
+    border:1px solid #d5c6ff;
+    background:#fff;
+    color:var(--ink);
+    border-radius:6px;
+    padding:.35rem .7rem;
+    font-size:.82rem;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .toggle button.active-yes{background:var(--green-light);border-color:#8fdc8f;color:#1c7a1c;font-weight:600;}
+  .toggle button.active-no{background:#fff2f2;border-color:#e6a3a3;color:#c62828;font-weight:600;}
 
-  .stage{
+  .summary{
+    margin-top:1.5rem;
     background:#fff;
     border:1px solid #eee0ff;
     border-radius:10px;
-    padding:1.3rem;
-  }
-  .prompt{
-    font-size:1.05rem;
-    line-height:1.5;
-    margin:0 0 1.1rem;
-  }
-  .options{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:.6rem;
-  }
-  @media (max-width:420px){
-    .options{grid-template-columns:1fr;}
-  }
-  .opt{
-    background:var(--purple-light);
-    border:1px solid #d5c6ff;
-    border-radius:8px;
-    padding:.65rem .7rem;
-    font-size:.88rem;
-    text-align:left;
-    cursor:pointer;
-    color:var(--ink);
-    font-family:inherit;
-  }
-  .opt:disabled{cursor:default;}
-  .opt.correct{background:var(--green-light);border-color:#8fdc8f;}
-  .opt.incorrect{background:var(--red-light);border-color:#e6a3a3;}
-
-  .feedback{
-    margin-top:1rem;
-    padding:.8rem .9rem;
-    border-radius:8px;
-    font-size:.9rem;
-    line-height:1.4;
-  }
-  .feedback.ok{background:var(--green-light);color:#1c7a1c;}
-  .feedback.no{background:var(--red-light);color:var(--red);}
-
-  .next{
-    margin-top:1rem;
-    background:var(--purple);
-    color:#fff;
-    border:none;
-    border-radius:6px;
-    padding:.6rem 1.1rem;
-    font-size:.9rem;
-    font-weight:600;
-    cursor:pointer;
-  }
-
-  .result{
+    padding:1.1rem 1.3rem;
     text-align:center;
-    padding:2rem 1rem;
   }
-  .result .big{
-    font-size:2.2rem;
+  .summary .big{
+    font-size:1.8rem;
     font-weight:700;
     color:var(--purple);
   }
-  .result p{color:var(--muted);font-size:.95rem;}
+  .summary p{color:var(--muted);font-size:.9rem;margin:.3rem 0 0;}
 
   footer{
     text-align:center;
@@ -133,123 +115,109 @@
 <header>
   <img src="https://i.postimg.cc/FKz4sz2C/logoutelsinfondo.png" alt="UTEL">
   <div class="title-block">
-    <h1>Simulador de Cierre</h1>
+    <h1>Checklist de Cierre</h1>
     <p class="subject">Módulo 4. La Dirección de Proyectos Fases 4 y 5 — Semana 4</p>
     <p class="meta">Profesor: Dr. Armando Sandoval Maravilla</p>
   </div>
 </header>
 
 <main>
-  <p class="intro">A cada pendiente le falta algo para poder cerrar el proyecto. Elige en cuál de las 4 categorías debe resolverse.</p>
-  <div class="progress" id="progress"></div>
-  <div id="stageWrap"></div>
+  <p class="intro">Piensa en un proyecto tuyo, real o cercano. Marca sí o no para cada elemento del cierre.</p>
+
+  <div id="groups"></div>
+
+  <div class="summary">
+    <div class="big"><span id="yesCount">0</span> / <span id="totalCount">0</span></div>
+    <p>elementos de cierre que sí tienes</p>
+  </div>
 </main>
 
 <footer>UTEL — Educación Continua</footer>
 
 <script>
-const items = [
-  { id: 1, text: "El cliente no ha firmado la aceptación de los entregables.", cat: "administrativo" },
-  { id: 2, text: "Las cuentas del proyecto siguen abiertas en el sistema contable.", cat: "administrativo" },
-  { id: 3, text: "Hay una reclamación de pago pendiente con un contratista.", cat: "contractual" },
-  { id: 4, text: "Nadie documentó si se cumplió el presupuesto ni por qué varió.", cat: "informe" },
-  { id: 5, text: "No existe un resumen de qué riesgos aparecieron y cómo se resolvieron.", cat: "informe" },
-  { id: 6, text: "Las lecciones aprendidas están solo en un chat de WhatsApp del equipo.", cat: "activos" },
+const groups = [
+  {
+    title: "Cierre administrativo",
+    items: [
+      "¿El cliente aceptó formalmente los entregables?",
+      "¿Las cuentas del proyecto están cerradas?",
+    ],
+  },
+  {
+    title: "Cierre contractual",
+    items: [
+      "¿Los proveedores confirmaron por escrito la aceptación de su trabajo?",
+      "¿Ya no hay reclamaciones abiertas con contratistas?",
+    ],
+  },
+  {
+    title: "Informe final",
+    items: [
+      "¿Existe un informe final con los resultados de alcance, costo y cronograma?",
+      "¿Se documentaron los riesgos y cómo se resolvieron?",
+    ],
+  },
+  {
+    title: "Activos de la organización",
+    items: [
+      "¿Las lecciones aprendidas quedaron archivadas en algún repositorio?",
+      "¿Los documentos de cierre y operación se entregaron a quien los va a usar?",
+    ],
+  },
 ];
 
-const options = [
-  { cat: "administrativo", label: "Cierre administrativo" },
-  { cat: "contractual", label: "Cierre contractual" },
-  { cat: "informe", label: "Informe final" },
-  { cat: "activos", label: "Activos de la organización" },
-];
+const state = {};
+let idCounter = 0;
 
-const feedback = {
-  administrativo: "Es cierre administrativo: entregables, cuentas y recursos del proyecto.",
-  contractual: "Es cierre contractual: acuerdos, reclamaciones y documentación con proveedores.",
-  informe: "Va en el informe final: evidencia de alcance, costo, cronograma o riesgos.",
-  activos: "Es actualización de activos de la organización: queda como conocimiento para futuros proyectos.",
-};
+const groupsWrap = document.getElementById("groups");
+let total = 0;
 
-let order = [];
-let current = 0;
-let score = 0;
+groups.forEach(group => {
+  const g = document.createElement("div");
+  g.className = "group";
+  const h2 = document.createElement("h2");
+  h2.textContent = group.title;
+  g.appendChild(h2);
 
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
+  group.items.forEach(text => {
+    total++;
+    const id = "q" + (idCounter++);
+    state[id] = null;
 
-function start() {
-  order = shuffle(items);
-  current = 0;
-  score = 0;
-  renderStage();
-}
-
-function renderProgress() {
-  document.getElementById("progress").textContent =
-    current < order.length ? `Pendiente ${current + 1} de ${order.length}` : "";
-}
-
-function renderStage() {
-  renderProgress();
-  const wrap = document.getElementById("stageWrap");
-  if (current >= order.length) {
-    wrap.innerHTML = `
-      <div class="stage result">
-        <div class="big">${score} / ${order.length}</div>
-        <p>pendientes bien clasificados</p>
-        <button class="next" id="restartBtn">Repetir actividad</button>
+    const item = document.createElement("div");
+    item.className = "item";
+    item.innerHTML = `
+      <p>${text}</p>
+      <div class="toggle">
+        <button data-id="${id}" data-val="si">Sí</button>
+        <button data-id="${id}" data-val="no">No</button>
       </div>`;
-    document.getElementById("restartBtn").addEventListener("click", start);
-    return;
-  }
-
-  const item = order[current];
-  wrap.innerHTML = `
-    <div class="stage">
-      <p class="prompt">${item.text}</p>
-      <div class="options">
-        ${options.map(o => `<button class="opt" data-cat="${o.cat}">${o.label}</button>`).join("")}
-      </div>
-      <div id="fb"></div>
-    </div>`;
-
-  wrap.querySelectorAll(".opt").forEach(btn => {
-    btn.addEventListener("click", () => answer(item, btn));
+    g.appendChild(item);
   });
+
+  groupsWrap.appendChild(g);
+});
+
+document.getElementById("totalCount").textContent = total;
+
+groupsWrap.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-id]");
+  if (!btn) return;
+  const id = btn.dataset.id;
+  const val = btn.dataset.val;
+  state[id] = val;
+
+  const siblings = btn.parentElement.querySelectorAll("button");
+  siblings.forEach(s => s.classList.remove("active-yes", "active-no"));
+  btn.classList.add(val === "si" ? "active-yes" : "active-no");
+
+  updateSummary();
+});
+
+function updateSummary() {
+  const yes = Object.values(state).filter(v => v === "si").length;
+  document.getElementById("yesCount").textContent = yes;
 }
-
-function answer(item, btn) {
-  const chosen = btn.dataset.cat;
-  const isCorrect = chosen === item.cat;
-  if (isCorrect) score++;
-
-  document.querySelectorAll(".opt").forEach(b => {
-    b.disabled = true;
-    if (b.dataset.cat === item.cat) b.classList.add("correct");
-    else if (b === btn) b.classList.add("incorrect");
-  });
-
-  const fb = document.getElementById("fb");
-  fb.innerHTML = `
-    <div class="feedback ${isCorrect ? "ok" : "no"}">
-      ${isCorrect ? "Correcto. " : "No era esa. "} ${feedback[item.cat]}
-    </div>
-    <button class="next" id="nextBtn">${current + 1 < order.length ? "Siguiente" : "Ver resultado"}</button>`;
-
-  document.getElementById("nextBtn").addEventListener("click", () => {
-    current++;
-    renderStage();
-  });
-}
-
-start();
 </script>
 </body>
 </html>
